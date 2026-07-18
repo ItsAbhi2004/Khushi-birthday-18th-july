@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday, My Beloved ❤️</tit[span_69](start_span)[span_69](end_span)[span_74](start_span)[span_74](end_span)le>
+    <title>Happy Birthday, Khushi ❤️</title>
     <!-- Google Fonts for Elegant and Sophisticated Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -329,15 +329,15 @@
                 <div class="flex gap-7 absolute bottom-[90px] z-20">
                     <!-- Candle Item 1 -->
                     <div class="candle-wrapper relative w-4 h-12 bg-gradient-to-t from-sky-400 to-indigo-300 rounded cursor-pointer flex justify-center">
-                        <div class="flame-particle absolute -top-5 w-4.5 h-6"></div>
+                        <div class="flame-particle absolute -top-5 w-[18px] h-6"></div>
                     </div>
                     <!-- Candle Item 2 (Center) -->
                     <div class="candle-wrapper relative w-4 h-12 bg-gradient-to-t from-pink-400 to-[#ff85a2] rounded cursor-pointer flex justify-center">
-                        <div class="flame-particle absolute -top-5 w-4.5 h-6"></div>
+                        <div class="flame-particle absolute -top-5 w-[18px] h-6"></div>
                     </div>
                     <!-- Candle Item 3 -->
                     <div class="candle-wrapper relative w-4 h-12 bg-gradient-to-t from-sky-400 to-indigo-300 rounded cursor-pointer flex justify-center">
-                        <div class="flame-particle absolute -top-5 w-4.5 h-6"></div>
+                        <div class="flame-particle absolute -top-5 w-[18px] h-6"></div>
                     </div>
                 </div>
 
@@ -380,11 +380,29 @@
     <!-- Client-Side App Controller Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const gsapSafe = window.gsap || {
+                to: (target, vars = {}) => {
+                    if (typeof vars.onComplete === 'function') vars.onComplete();
+                    return { then: () => {} };
+                },
+                timeline: () => ({
+                    to: (target, vars = {}) => {
+                        const delay = ((vars.delay || 0) + (vars.duration || 0)) * 1000;
+                        window.setTimeout(() => {
+                            if (target && target.style) {
+                                if (vars.opacity !== undefined) target.style.opacity = vars.opacity;
+                                if (vars.scale !== undefined) target.style.transform = `scale(${vars.scale})`;
+                            }
+                            if (typeof vars.onComplete === 'function') vars.onComplete();
+                        }, delay);
+                    }
+                })
+            };
+            const launchConfetti = window.confetti || (() => {});
             
-            // Birthday Date config (Change this to her specific date)
-            const targetCelebrationDate = new Date();
-            // For live countdown testing, set date to 10 seconds in the future
-            targetCelebrationDate.setSeconds(targetCelebrationDate.getSeconds() + 10);
+            // Birthday Date config: unlocks on July 18 each year.
+            const today = new Date();
+            const targetCelebrationDate = new Date(today.getFullYear(), 6, 18, 0, 0, 0);
 
             // Persisted Image Asset management
             const fallbackImageUrl = "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop";
@@ -406,7 +424,7 @@
                         isAudioActive = true;
                         audioLabel.innerText = "Mute Sound";
                         visualizerWave.classList.remove('hidden');
-                        gsap.to(audioToggleBtn, { borderColor: '#ff477e', scale: 1.05, duration: 0.3 });
+                        gsapSafe.to(audioToggleBtn, { borderColor: '#ff477e', scale: 1.05, duration: 0.3 });
                     }).catch(err => {
                         console.warn("Deferred audio play due to user gesture interaction rules: " + err);
                     });
@@ -415,7 +433,7 @@
                     isAudioActive = false;
                     audioLabel.innerText = "Play Sound";
                     visualizerWave.classList.add('hidden');
-                    gsap.to(audioToggleBtn, { borderColor: 'rgba(255, 255, 255, 0.3)', scale: 1, duration: 0.3 });
+                    gsapSafe.to(audioToggleBtn, { borderColor: 'rgba(255, 255, 255, 0.3)', scale: 1, duration: 0.3 });
                 }
             }
 
@@ -443,7 +461,7 @@
 
                 particleDriftCanvas.appendChild(particle);
 
-                gsap.to(particle, {
+                gsapSafe.to(particle, {
                     y: '-112vh',
                     x: horizontalSway + 'vw',
                     opacity: Math.random() * 0.65 + 0.35,
@@ -481,7 +499,7 @@
                 } else if (state === 'MAIN') {
                     experienceDashboard.classList.remove('hidden');
                     // Fast firework on system transition
-                    confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+                    launchConfetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
                     triggerNarrativeTypewriter();
                 }
             }
@@ -532,7 +550,7 @@
                 setAudioPlayback(true);
 
                 // Delay transitions to let unboxing animation complete
-                gsap.timeline()
+                gsapSafe.timeline()
                     .to(envelopeScreen, {
                         scale: 0.9,
                         opacity: 0,
@@ -594,7 +612,7 @@
             function extinguishCandleFlame(candle) {
                 const flame = candle.querySelector('.flame-particle');
                 if (flame && flame.style.display !== 'none') {
-                    gsap.to(flame, {
+                    gsapSafe.to(flame, {
                         opacity: 0,
                         scale: 0,
                         duration: 0.45,
@@ -604,7 +622,7 @@
                             extinguishedCandlesTotal++;
                             
                             // Visual trigger for single candle extinction
-                            confetti({
+                            launchConfetti({
                                 particleCount: 20,
                                 spread: 35,
                                 origin: { y: 0.7 }
@@ -693,7 +711,7 @@
             // Final Grand Climax celebration
             function triggerGrandCelebratoryFinale() {
                 interactionInstructions.innerHTML = "✨ You are the brightest star in my sky! Happy Birthday! ✨";
-                gsap.to(interactionInstructions, { scale: 1.1, color: '#ff477e', duration: 0.3, yoyo: true, repeat: 5 });
+                gsapSafe.to(interactionInstructions, { scale: 1.1, color: '#ff477e', duration: 0.3, yoyo: true, repeat: 5 });
 
                 // Cleanup stream to save battery
                 if (audioCaptureStream) {
@@ -713,13 +731,13 @@
 
                     const dynamicCount = 50 * (remainingTime / executionDuration);
 
-                    confetti({
+                    launchConfetti({
                         particleCount: dynamicCount,
                         angle: 60,
                         spread: 60,
                         origin: { x: 0, y: 0.6 }
                     });
-                    confetti({
+                    launchConfetti({
                         particleCount: dynamicCount,
                         angle: 120,
                         spread: 60,
@@ -729,7 +747,7 @@
 
                 // Trigger huge central color burst
                 setTimeout(() => {
-                    confetti({
+                    launchConfetti({
                         particleCount: 200,
                         spread: 130,
                         origin: { y: 0.55 },
